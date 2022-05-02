@@ -6,7 +6,6 @@ const port = process.env.PORT || 5000;
 
 const app = express();
 
-
 // use middleware
 app.use(cors());
 app.use(express.json());
@@ -46,7 +45,12 @@ async function run() {
         })
 
         // DELETE Product
-        
+        app.delete('/product', (req, res) => {
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const result = await productCollection.deleteOne(query);
+            res.send(result);
+        })
 
     }
     finally{
