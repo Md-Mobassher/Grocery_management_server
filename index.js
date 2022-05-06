@@ -18,40 +18,59 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try{
         await client.connect();
-        const productCollection = client.db('grocaGrocery').collection('product');
+        const inventoryCollection = client.db('grocaGrocery').collection('inventory');
+        const orderCollection = client.db('grocaGrocery').collection('order');
 
-        // get all products
-        app.get('/product', async(req, res) => {
+        // get all inventory
+        app.get('/inventory', async(req, res) => {
             const query = {};
-            const cursor = productCollection.find(query);
-            const products = await cursor.toArray();
-            console.log(products);
-            res.send(products);
+            const cursor = inventoryCollection.find(query);
+            const inventories = await cursor.toArray();
+            res.send(inventories);
         });
 
-        // get single product
-        app.get('/product/:id', async(req, res) =>{
+        // get single inventory
+        app.get('/inventory/:id', async(req, res) =>{
             const id = req.params.id;
             const query = {_id: ObjectId(id)};
-            const product = await productCollection.findOne(query);
-            res.send(product);
+            const inventory = await inventoryCollection.findOne(query);
+            res.send(inventory);
         })
 
-        // POST Product
-        app.get('/product', async(req, res) => {
-            const newProduct = req.body;
-            const result = await productCollection.insertOne(newProduct);
+        // POST inventory
+        app.post('/inventory', async(req, res) => {
+            const newInventory = req.body;
+            const result = await inventoryCollection.insertOne(newInventory);
+            console.log(result);
             res.send(result);
         })
 
-        // DELETE Product
-        app.delete('/product', (req, res) => {
+        // DELETE inventory
+        app.delete('/inventory/:id', async(req, res) => {
             const id = req.params.id;
             const query = {_id: ObjectId(id)};
-            const result = await productCollection.deleteOne(query);
-            res.send(result);
+            const result = await inventoryCollection.deleteOne(query);
+            if (result.deletedCount === 1) {
+                res.send("Successfully deleted one document.");
+              } else {
+                res.send("No documents matched. Deleted 0 documents.");
+              }           
         })
 
+        
+
+
+        // Order collection api
+
+        app.get('/order', async(req,res) => {
+            const query = {};
+            const cursor = orderCollection.find(query);
+            const orders = await cursor.toArray();
+            res.send(orders);
+        })
+
+
+        
     }
     finally{
 
