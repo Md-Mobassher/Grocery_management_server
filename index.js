@@ -36,6 +36,7 @@ async function run() {
         await client.connect();
         const inventoryCollection = client.db('grocaGrocery').collection('inventory');
         const orderCollection = client.db('grocaGrocery').collection('order');
+        const deliverCollection = client.db('grocaGrocery').collection('deliver');
 
         
         // AUTH
@@ -114,7 +115,6 @@ async function run() {
                 res.status(403).send({message: 'forbidden access'})
             }
         })
-       
 
         // post order
         app.post('/order', async (req, res) => {
@@ -130,6 +130,7 @@ async function run() {
             const result = await orderCollection.deleteOne(query);
             res.send(result)         
         })
+        
         
     }
     finally{
