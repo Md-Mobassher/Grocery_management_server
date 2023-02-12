@@ -1,6 +1,7 @@
 const { ObjectId } = require("mongodb");
 const { getDb } = require("../utils/dbConnect");
 
+/* get all inventory */
 
 module.exports.getAllInventory = async (req, res, next) => {
   try {
@@ -16,45 +17,58 @@ module.exports.getAllInventory = async (req, res, next) => {
   }
 };
 
-// module.exports.saveATool = async (req, res, next) => {
-//   try {
-//     const db = getDb();
-//     const tool = req.body;
 
-//     const result = await db.collection("tools").insertOne(tool);
-//     console.log(result);
+/*  save a inventory */
+module.exports.saveAInventory = async (req, res, next) => {
+  try {
+    const db = getDb();
+    const newInventory = req.body;
 
-//     if (!result.insertedId) {
-//       return res.status(400).send({ status: false, error: "Something went wrong!" });
-//     }
+    const requiredProperties = ["name", "price","img", "quantity", "supplier", "description"];
+    const missingProperties = requiredProperties.filter(prop => !(prop in newInventory));
 
-//     res.send({ success: true, message: `Tool added with id: ${result.insertedId}` });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+    if (missingProperties.length > 0) {
+      return res.status(400).send({
+        success: false,
+        error: `The following properties are missing: ${missingProperties.join(", ")}`
+      });
+    }
 
-// module.exports.getToolDetail = async (req, res, next) => {
-//   try {
-//     const db = getDb();
-//     const { id } = req.params;
+    const result = await db.collection("inventory").insertOne(newInventory);
 
-//     if(!ObjectId.isValid(id)){
-//       return res.status(400).json({ success: false, error: "Not a valid tool id."});
-//     }
+    if (!result.insertedId) {
+      return res.status(400).send({ success: false, error: "Something went wrong!" });
+    }
 
-//     const tool = await db.collection("tools").findOne({_id: ObjectId(id)});
+    res.send({ success: true, message: `Inventory added with id: ${result.insertedId}` });
+  } catch (error) {
+    next(error);
+  }
+};
 
-//     if(!tool){
-//       return res.status(400).json({ success: false, error: "Couldn't find a tool with this id"});
-//     }
+/* get inventory details */
 
-//     res.status(200).json({ success: true, data: tool });
+module.exports.getInventoryDetail = async (req, res, next) => {
+  try {
+    const db = getDb();
+    const { id } = req.params;
+
+    if(!ObjectId.isValid(id)){
+      return res.status(400).json({ success: false, error: "Not a valid inventory id."});
+    }
+
+    const inventory = await db.collection("inventory").findOne({_id: ObjectId(id)});
+
+    if(!inventory){
+      return res.status(400).json({ success: false, error: "Couldn't find a inventory with this id"});
+    }
+
+    res.status(200).json({ success: true, data: inventory });
     
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+  } catch (error) {
+    next(error);
+  }
+};
 
 // module.exports.updateTool = async (req, res, next) => {
 //   try {
@@ -98,19 +112,6 @@ module.exports.getAllInventory = async (req, res, next) => {
 //   }
 // };
 
-// module.exports.test = async(req, res, next) => {
-//   for (let i = 0; i < 100000; i++) {
-//     const db = getDb();
-//     db.collection("test").insertOne({name: `test ${i}`, age: i });
-//   }
-// };
-// module.exports.testGet = async(req, res, next) => {
-//   const db = getDb();
-
-//   const result = await db.collection("test").find({ name: "test 99999" }).toArray();
-//   res.json(result);
-// };
-
 
 
 // async function run() {
@@ -131,29 +132,6 @@ module.exports.getAllInventory = async (req, res, next) => {
 //         })
 
 
-//         // get all inventory
-//         app.get('/inventory', async(req, res) => {
-//             const query = {};
-//             const cursor = inventoryCollection.find(query);
-//             const inventories = await cursor.toArray();
-//             res.send(inventories);
-//         });
-
-//         // get single inventory
-//         app.get('/inventory/:id', async(req, res) =>{
-//             const id = req.params.id;
-//             const query = {_id: ObjectId(id)};
-//             const inventory = await inventoryCollection.findOne(query);
-//             res.send(inventory);
-//         })
-
-//         // POST inventory
-//         app.post('/inventory', async(req, res) => {
-//             const newInventory = req.body;
-//             const result = await inventoryCollection.insertOne(newInventory);
-//             console.log(result);
-//             res.send(result);
-//         })
 
 //         // DELETE inventory
 //         app.delete('/inventory/:id', async(req, res) => {

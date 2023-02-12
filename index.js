@@ -41,7 +41,8 @@ connectToServer((err) => {
   
 
   app.use("/api/v1/inventory" , inventoryRoutes)
-  app.use("/inventory" , inventoryRoutes)
+
+  
   
   app.get('/', (req, res) => {
     res.send("Server is running");
