@@ -5,7 +5,6 @@ import { UserServices } from './user.service'
 
 const createAdmin = catchAsync(async (req, res) => {
   const { password, ...adminData } = req.body
-
   const result = await UserServices.createAdminIntoDB(
     req.file,
     password,
@@ -20,18 +19,37 @@ const createAdmin = catchAsync(async (req, res) => {
   })
 })
 
-// const createUser = catchAsync(async (req, res) => {
-//   const { password, admin: adminData } = req.body
+const createSeller = catchAsync(async (req, res) => {
+  const { password, ...adminData } = req.body
+  const result = await UserServices.createSellerIntoDB(
+    req.file,
+    password,
+    adminData,
+  )
 
-//   const result = await UserServices.createAdminIntoDB(password, adminData)
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Seller is created succesfully',
+    data: result,
+  })
+})
 
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: 'Admin is created succesfully',
-//     data: result,
-//   })
-// })
+const createBuyer = catchAsync(async (req, res) => {
+  const { password, ...adminData } = req.body
+  const result = await UserServices.createBuyerIntoDB(
+    req.file,
+    password,
+    adminData,
+  )
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Buyer is created succesfully',
+    data: result,
+  })
+})
 
 const getMe = catchAsync(async (req, res) => {
   const { email, role } = req.body
@@ -60,7 +78,8 @@ const changeStatus = catchAsync(async (req, res) => {
 
 export const UserControllers = {
   createAdmin,
-  // createUser,
+  createSeller,
+  createBuyer,
   getMe,
   changeStatus,
 }

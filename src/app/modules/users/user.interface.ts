@@ -7,7 +7,7 @@ export interface IUser {
   password: string
   needsPasswordChange?: boolean
   passwordChangedAt?: Date
-  role: 'superAdmin' | 'admin' | 'user'
+  role: 'superAdmin' | 'admin' | 'seller' | 'buyer'
   status: 'in-progress' | 'blocked'
   isDeleted: boolean
 }

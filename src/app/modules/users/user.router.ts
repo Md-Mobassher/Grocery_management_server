@@ -6,6 +6,7 @@ import { USER_ROLE } from './user.constant'
 import auth from '../../middlewares/auth'
 import { upload } from '../../utils/sendImageToCloudinary'
 import { UserValidation } from './user.validation'
+import { createSellerValidationSchema } from '../seller/seller.validation'
 
 const router = express.Router()
 
@@ -23,6 +24,19 @@ router.post(
 )
 
 router.post(
+  '/create-seller',
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
+
+  upload.single('file'),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = JSON.parse(req.body.data)
+    next()
+  },
+  validateRequest(createSellerValidationSchema),
+  UserControllers.createSeller,
+)
+
+router.post(
   '/change-status/:id',
   auth(USER_ROLE.superAdmin, USER_ROLE.admin),
   validateRequest(UserValidation.changeStatusValidationSchema),
@@ -31,7 +45,12 @@ router.post(
 
 router.get(
   '/me',
-  auth(USER_ROLE.superAdmin, USER_ROLE.admin, USER_ROLE.user),
+  auth(
+    USER_ROLE.superAdmin,
+    USER_ROLE.admin,
+    USER_ROLE.buyer,
+    USER_ROLE.seller,
+  ),
   UserControllers.getMe,
 )
 
