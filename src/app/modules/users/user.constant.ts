@@ -1,7 +1,8 @@
 export const USER_ROLE = {
   superAdmin: 'superAdmin',
   admin: 'admin',
-  user: 'user',
+  seller: 'seller',
+  buyer: 'buyer',
 } as const
 
 export const UserStatus = ['in-progress', 'blocked']

@@ -8,9 +8,10 @@ import { upload } from '../../utils/sendImageToCloudinary'
 import { UserValidation } from './user.validation'
 
 const router = express.Router()
+
 router.post(
   '/create-admin',
-  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
+  auth(USER_ROLE.superAdmin),
 
   upload.single('file'),
   (req: Request, res: Response, next: NextFunction) => {

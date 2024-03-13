@@ -1,16 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status'
 import AppError from '../../errors/AppError'
-
 import { User } from './user.model'
 import mongoose from 'mongoose'
-// import config from '../../config'
 import { Admin } from '../admin/admin.model'
 import { TAdmin } from '../admin/admin.interface'
 import { IUser } from './user.interface'
 import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary'
 import { USER_ROLE } from './user.constant'
-// import { USER_ROLE } from './user.constant'
 
 const createAdminIntoDB = async (
   file: any,
