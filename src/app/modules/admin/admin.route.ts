@@ -21,7 +21,7 @@ router.get(
 )
 
 router.patch(
-  '/:id',
+  '/:adminId',
   auth(USER_ROLE.superAdmin),
   validateRequest(updateAdminValidationSchema),
   AdminControllers.updateAdmin,

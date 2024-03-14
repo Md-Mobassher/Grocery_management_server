@@ -3,18 +3,6 @@ import catchAsync from '../../utils/catchAsync'
 import sendResponse from '../../utils/sendResponse'
 import { AdminServices } from './admin.service'
 
-const getSingleAdmin = catchAsync(async (req, res) => {
-  const { id } = req.params
-  const result = await AdminServices.getSingleAdminFromDB(id)
-
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'Admin is retrieved succesfully',
-    data: result,
-  })
-})
-
 const getAllAdmins = catchAsync(async (req, res) => {
   const result = await AdminServices.getAllAdminsFromDB(req.query)
 
@@ -27,10 +15,22 @@ const getAllAdmins = catchAsync(async (req, res) => {
   })
 })
 
-const updateAdmin = catchAsync(async (req, res) => {
+const getSingleAdmin = catchAsync(async (req, res) => {
   const { id } = req.params
+  const result = await AdminServices.getSingleAdminFromDB(id)
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Admin is retrieved succesfully',
+    data: result,
+  })
+})
+
+const updateAdmin = catchAsync(async (req, res) => {
+  const { adminId } = req.params
   const { ...adminData } = req.body
-  const result = await AdminServices.updateAdminIntoDB(id, adminData)
+  const result = await AdminServices.updateAdminIntoDB(adminId, adminData)
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

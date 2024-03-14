@@ -42,6 +42,10 @@ const sellerSchema = new Schema<TSeller, SellerModel>(
       required: [true, 'Email is required'],
       unique: true,
     },
+    ownerName: {
+      type: String,
+      required: [true, 'OwnerName is required'],
+    },
     gender: {
       type: String,
       enum: {
@@ -56,7 +60,7 @@ const sellerSchema = new Schema<TSeller, SellerModel>(
       type: String,
       required: [true, 'Emergency contact number is required'],
     },
-    bloogGroup: {
+    bloodGroup: {
       type: String,
       enum: {
         values: BloodGroup,

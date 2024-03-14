@@ -19,12 +19,13 @@ export type TUserName = {
 
 export type TSeller = {
   user: Types.ObjectId
-  designation: string
   name: TUserName
-  companyName: string
-  registrationNumber: string
-
   email: string
+  password: string
+  companyName: string
+  ownerName: string
+  designation: string
+  registrationNumber: string
   gender: TGender
   dateOfBirth: Date
   contactNo: string

@@ -20,7 +20,7 @@ const createAdminIntoDB = async (
   const userData: Partial<IUser> = {}
 
   //set role
-  userData.role = 'admin'
+  userData.role = USER_ROLE.admin
 
   userData.password = password
 
@@ -74,11 +74,12 @@ const createSellerIntoDB = async (
   password: string,
   payload: TSeller,
 ) => {
+  console.log(payload)
   // create a user object
   const userData: Partial<IUser> = {}
 
   //set seller role
-  userData.role = 'seller'
+  userData.role = USER_ROLE.seller
 
   userData.password = password
 
@@ -98,6 +99,7 @@ const createSellerIntoDB = async (
       payload.profileImg = secure_url as string
     }
 
+    console.log(userData)
     // create a user (transaction-1)
     const newUser = await User.create([userData], { session })
 

@@ -56,7 +56,7 @@ const adminSchema = new Schema<TAdmin, AdminModel>(
       type: String,
       required: [true, 'Emergency contact number is required'],
     },
-    bloogGroup: {
+    bloodGroup: {
       type: String,
       enum: {
         values: BloodGroup,
@@ -114,6 +114,10 @@ adminSchema.pre('aggregate', function (next) {
 //checking if user is already exist!
 adminSchema.statics.isAdminExistsByEmail = async function (email: string) {
   const existingUser = await Admin.findOne({ email })
+  return existingUser
+}
+adminSchema.statics.isAdminExistsById = async function (id: string) {
+  const existingUser = await Admin.findById({ id })
   return existingUser
 }
 

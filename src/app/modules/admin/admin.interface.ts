@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Model, Types } from 'mongoose'
 
 export type TGender = 'male' | 'female' | 'other'
@@ -26,7 +27,7 @@ export type TAdmin = {
   dateOfBirth: Date
   contactNo: string
   emergencyContactNo: string
-  bloogGroup?: TBloodGroup
+  bloodGroup?: TBloodGroup
   presentAddress: string
   permanentAddress: string
   profileImg?: string
@@ -34,6 +35,6 @@ export type TAdmin = {
 }
 
 export interface AdminModel extends Model<TAdmin> {
-  // eslint-disable-next-line no-unused-vars
+  isAdminExistsById(id: string): Promise<TAdmin | null>
   isUserExistsByEmail(email: string): Promise<TAdmin | null>
 }

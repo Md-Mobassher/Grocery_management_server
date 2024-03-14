@@ -57,7 +57,7 @@ const deleteAdminFromDB = async (id: string | undefined) => {
 
     const isAdminExists = await Admin.findById(id).session(session)
 
-    if (id !== isAdminExists?._id) {
+    if (!isAdminExists) {
       throw new AppError(httpStatus.NOT_FOUND, 'Admin not found')
     }
 

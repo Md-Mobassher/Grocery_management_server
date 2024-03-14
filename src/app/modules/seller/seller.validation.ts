@@ -9,15 +9,16 @@ const createUserNameValidationSchema = z.object({
 
 export const createSellerValidationSchema = z.object({
   name: createUserNameValidationSchema,
-  companyName: z.string(),
   email: z.string().email(),
   password: z.string().max(20),
+  companyName: z.string(),
+  ownerName: z.string(),
   designation: z.string(),
   gender: z.enum([...Gender] as [string, ...string[]]),
   dateOfBirth: z.string(),
   contactNo: z.string(),
   emergencyContactNo: z.string(),
-  bloogGroup: z.enum([...BloodGroup] as [string, ...string[]]),
+  bloodGroup: z.enum([...BloodGroup] as [string, ...string[]]),
   presentAddress: z.string(),
   permanentAddress: z.string(),
 })
@@ -31,9 +32,9 @@ const updateUserNameValidationSchema = z.object({
 export const updateSellerValidationSchema = z
   .object({
     user: z.string().optional(),
-    companyName: z.string().optional(),
     registrationNumber: z.string().optional(),
     ownerName: updateUserNameValidationSchema,
+    companyName: z.string().optional(),
     email: z.string().email().optional(),
     gender: z.enum([...Gender] as [string, ...string[]]).optional(),
     dateOfBirth: z.date().optional(),

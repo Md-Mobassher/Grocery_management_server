@@ -16,7 +16,7 @@ export const createAdminValidationSchema = z.object({
   dateOfBirth: z.string().optional(),
   contactNo: z.string(),
   emergencyContactNo: z.string(),
-  bloogGroup: z.enum([...BloodGroup] as [string, ...string[]]),
+  bloodGroup: z.enum([...BloodGroup] as [string, ...string[]]),
   presentAddress: z.string(),
   permanentAddress: z.string(),
 })
@@ -35,7 +35,7 @@ export const updateAdminValidationSchema = z.object({
   dateOfBirth: z.string().optional(),
   contactNo: z.string().optional(),
   emergencyContactNo: z.string().optional(),
-  bloogGroup: z.enum([...BloodGroup] as [string, ...string[]]).optional(),
+  bloodGroup: z.enum([...BloodGroup] as [string, ...string[]]).optional(),
   presentAddress: z.string().optional(),
   permanentAddress: z.string().optional(),
   profileImg: z.string().optional(),
