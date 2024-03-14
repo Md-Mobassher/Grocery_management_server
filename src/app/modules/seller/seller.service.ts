@@ -3,33 +3,33 @@ import httpStatus from 'http-status'
 import mongoose from 'mongoose'
 import QueryBuilder from '../../builder/QueryBuilder'
 import AppError from '../../errors/AppError'
-import { AdminSearchableFields } from './seller.constant'
-import { TAdmin } from './seller.interface'
-import { Admin } from './seller.model'
+import { SellerSearchableFields } from './seller.constant'
 import { User } from '../users/user.model'
+import { Seller } from './seller.model'
+import { TSeller } from './seller.interface'
 
-const getAllAdminsFromDB = async (query: Record<string, unknown>) => {
-  const adminQuery = new QueryBuilder(Admin.find(), query)
-    .search(AdminSearchableFields)
+const getAllSellersFromDB = async (query: Record<string, unknown>) => {
+  const sellerQuery = new QueryBuilder(Seller.find(), query)
+    .search(SellerSearchableFields)
     .filter()
     .sort()
     .paginate()
     .fields()
 
-  const result = await adminQuery.modelQuery
-  const meta = await adminQuery.countTotal()
+  const result = await sellerQuery.modelQuery
+  const meta = await sellerQuery.countTotal()
   return {
     meta,
     result,
   }
 }
 
-const getSingleAdminFromDB = async (id: string) => {
-  const result = await Admin.findById(id)
+const getSingleSellerFromDB = async (id: string) => {
+  const result = await Seller.findById(id)
   return result
 }
 
-const updateAdminIntoDB = async (id: string, payload: Partial<TAdmin>) => {
+const updateSellerIntoDB = async (id: string, payload: Partial<TSeller>) => {
   const { name, ...remainingAdminData } = payload
 
   const modifiedUpdatedData: Record<string, unknown> = {
@@ -42,37 +42,37 @@ const updateAdminIntoDB = async (id: string, payload: Partial<TAdmin>) => {
     }
   }
 
-  const result = await Admin.findByIdAndUpdate(id, modifiedUpdatedData, {
+  const result = await Seller.findByIdAndUpdate(id, modifiedUpdatedData, {
     new: true,
     runValidators: true,
   })
   return result
 }
 
-const deleteAdminFromDB = async (id: string | undefined) => {
+const deleteSellerFromDB = async (id: string | undefined) => {
   const session = await mongoose.startSession()
 
   try {
     session.startTransaction()
 
-    const isAdminExists = await Admin.findById(id).session(session)
+    const isSellerExists = await Seller.findById(id).session(session)
 
-    if (id !== isAdminExists?._id) {
-      throw new AppError(httpStatus.NOT_FOUND, 'Admin not found')
+    if (!isSellerExists) {
+      throw new AppError(httpStatus.NOT_FOUND, 'Seller not found')
     }
 
-    const deletedAdmin = await Admin.findByIdAndUpdate(
+    const deletedSeller = await Seller.findByIdAndUpdate(
       id,
       { isDeleted: true },
       { new: true, session },
     )
 
-    if (!deletedAdmin) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete Admin')
+    if (!deletedSeller) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete Seller')
     }
 
-    // get user _id from deletedAdmin
-    const userId = deletedAdmin.user
+    // get user _id from deletedSeller
+    const userId = deletedSeller.user
 
     const deletedUser = await User.findOneAndUpdate(
       userId,
@@ -87,7 +87,7 @@ const deleteAdminFromDB = async (id: string | undefined) => {
     await session.commitTransaction()
     await session.endSession()
 
-    return deletedAdmin
+    return deletedSeller
   } catch (err: any) {
     await session.abortTransaction()
     await session.endSession()
@@ -95,9 +95,9 @@ const deleteAdminFromDB = async (id: string | undefined) => {
   }
 }
 
-export const AdminServices = {
-  getAllAdminsFromDB,
-  getSingleAdminFromDB,
-  updateAdminIntoDB,
-  deleteAdminFromDB,
+export const SellerServices = {
+  getAllSellersFromDB,
+  getSingleSellerFromDB,
+  updateSellerIntoDB,
+  deleteSellerFromDB,
 }

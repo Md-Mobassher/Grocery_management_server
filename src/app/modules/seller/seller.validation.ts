@@ -48,7 +48,7 @@ export const updateSellerValidationSchema = z
   })
   .partial()
 
-export const AdminValidations = {
+export const SellerValidations = {
   createSellerValidationSchema,
   updateSellerValidationSchema,
 }

@@ -42,9 +42,13 @@ const sellerSchema = new Schema<TSeller, SellerModel>(
       required: [true, 'Email is required'],
       unique: true,
     },
+    companyName: {
+      type: String,
+      required: [true, 'Company Name is required'],
+    },
     ownerName: {
       type: String,
-      required: [true, 'OwnerName is required'],
+      required: [true, 'Owner Name is required'],
     },
     gender: {
       type: String,

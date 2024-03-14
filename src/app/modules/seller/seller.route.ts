@@ -1,36 +1,35 @@
 import express from 'express'
 import auth from '../../middlewares/auth'
 import validateRequest from '../../middlewares/validateRequest'
-
-import { AdminControllers } from './seller.controller'
-import { updateAdminValidationSchema } from './seller.validation'
+import { SellerControllers } from './seller.controller'
 import { USER_ROLE } from '../users/user.constant'
+import { updateSellerValidationSchema } from './seller.validation'
 
 const router = express.Router()
 
 router.get(
   '/',
   auth(USER_ROLE.superAdmin, USER_ROLE.admin),
-  AdminControllers.getAllAdmins,
+  SellerControllers.getAllSellers,
 )
 
 router.get(
   '/:id',
   auth(USER_ROLE.superAdmin, USER_ROLE.admin),
-  AdminControllers.getSingleAdmin,
+  SellerControllers.getSingleSeller,
 )
 
 router.patch(
   '/:id',
-  auth(USER_ROLE.superAdmin),
-  validateRequest(updateAdminValidationSchema),
-  AdminControllers.updateAdmin,
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
+  validateRequest(updateSellerValidationSchema),
+  SellerControllers.updateSeller,
 )
 
 router.delete(
-  '/:adminId',
-  auth(USER_ROLE.superAdmin),
-  AdminControllers.deleteAdmin,
+  '/:sellerId',
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
+  SellerControllers.deleteSeller,
 )
 
-export const AdminRoutes = router
+export const SellerRoutes = router
