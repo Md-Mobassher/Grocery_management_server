@@ -9,6 +9,7 @@ export type TProduct = {
   category: Types.ObjectId[]
   imageUrl: string[]
   isActive: boolean
+  isDeleted?: boolean
   tags?: string[]
   discount?: {
     percentage: number
