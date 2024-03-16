@@ -7,25 +7,39 @@ import { Product } from './product.model'
 import { ProductSearchableFields } from './product.constant'
 import { TProduct } from './product.interface'
 import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary'
+import { Express } from 'express'
 
-const createProductIntoDB = async (file: any, payload: TProduct) => {
+const createProductIntoDB = async (
+  files: Express.Multer.File[] | [],
+  payload: TProduct,
+) => {
   const session = await mongoose.startSession()
 
   try {
     session.startTransaction()
 
-    if (file) {
-      const imageName = `${payload?.name}`
-      const path = file?.path
-      //send image to cloudinary
+    // Array to store Cloudinary URLs for each uploaded file
+    const cloudinaryUrls: string[] = []
+
+    // Iterate over each uploaded file
+    for (const file of files) {
+      const imageName = `${payload.name}-${Date.now()}`
+
+      const path = file.path
+      // Send image to Cloudinary
       const { secure_url } = await sendImageToCloudinary(imageName, path)
-      payload?.imageUrl?.push(secure_url as string)
+      cloudinaryUrls.push(secure_url as string)
     }
-    console.log(payload)
-    // create a Product
+
+    // Initialize imageUrl array if it's undefined
+    payload.imageUrl = payload?.imageUrl || []
+
+    // Append Cloudinary URLs to imageUrl array in payload
+    payload.imageUrl = payload.imageUrl.concat(cloudinaryUrls)
+
+    // Create a Product
     const newProduct = await Product.create([payload], { session })
-    console.log(newProduct)
-    //create a admin
+
     if (!newProduct.length) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create Product')
     }
@@ -59,6 +73,11 @@ const getAllProductsFromDB = async (query: Record<string, unknown>) => {
 
 const getSingleProductFromDB = async (id: string) => {
   const result = await Product.findById(id)
+
+  if (!result) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Product not found!')
+  }
+
   return result
 }
 

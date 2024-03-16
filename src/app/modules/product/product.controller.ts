@@ -2,14 +2,17 @@ import httpStatus from 'http-status'
 import catchAsync from '../../utils/catchAsync'
 import sendResponse from '../../utils/sendResponse'
 import { ProductServices } from './product.service'
+import { Express } from 'express'
 
 const createProduct = catchAsync(async (req, res) => {
   const { ...productData } = req.body
+
+  const files: Express.Multer.File[] | [] = req.files
+
   const result = await ProductServices.createProductIntoDB(
-    req.file,
+    files, // Pass the files with the asserted type
     productData,
   )
-
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -17,6 +20,7 @@ const createProduct = catchAsync(async (req, res) => {
     data: result,
   })
 })
+
 const getAllProducts = catchAsync(async (req, res) => {
   const result = await ProductServices.getAllProductsFromDB(req.query)
 
@@ -43,10 +47,10 @@ const getSingleProduct = catchAsync(async (req, res) => {
 
 const updateProduct = catchAsync(async (req, res) => {
   const { productId } = req.params
-  const { ...sellerData } = req.body
+  const { ...productData } = req.body
   const result = await ProductServices.updateProductIntoDB(
     productId,
-    sellerData,
+    productData,
   )
 
   sendResponse(res, {
