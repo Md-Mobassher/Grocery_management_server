@@ -4,51 +4,70 @@ import AppError from '../../errors/AppError'
 import { TCartItem } from './cart.interface'
 import { Cart } from './cart.model'
 import { Types } from 'mongoose'
+import { Product } from '../product/product.model'
 
-const addToCart = async (userId: string, item: TCartItem) => {
+const addToCart = async (userId: string, items: TCartItem[]) => {
   let cart = await Cart.findOne({ userId })
+
   if (!cart) {
     cart = new Cart({ userId, items: [] })
   }
 
-  const existingItemIndex = cart.items.findIndex(
-    (i) => i.productId === item.productId,
-  )
+  for (const item of items) {
+    const isProductExist = await Product.findById(item.productId)
 
-  if (existingItemIndex !== -1) {
-    // Update quantity if item already exists in cart
-    cart.items[existingItemIndex].quantity += item.quantity
-  } else {
-    // Add new item to cart
-    cart.items.push(item)
+    if (!isProductExist) {
+      throw new AppError(httpStatus.NOT_FOUND, 'Product not found')
+    }
+
+    const existingItem = cart.items.find((i) =>
+      i.productId.equals(item.productId),
+    )
+
+    if (existingItem) {
+      // Update quantity if item already exists in cart
+      existingItem.quantity += item.quantity
+    } else {
+      // Add new item to cart
+      cart.items.push(item)
+    }
   }
 
-  return await cart.save()
+  const result = await cart.save()
+  return result
 }
 
 const getCartByUserId = async (userId: string) => {
   const result = await Cart.findOne({ userId })
     .populate('items.productId')
     .exec()
+
+  if (!result) {
+    throw new AppError(httpStatus.NOT_FOUND, 'No cart found')
+  }
   return result
 }
 
 const updateCartItemQuantity = async (
-  userId: string,
-  item: Partial<TCartItem>,
+  userId: Types.ObjectId,
+  productId: Types.ObjectId | string,
+  quantity: number,
 ) => {
   const cart = await Cart.findOne({ userId })
 
   if (!cart) {
-    throw new Error('Cart not found')
+    throw new AppError(httpStatus.NOT_FOUND, 'Cart not found')
   }
 
-  const { ...cartData } = item
+  const existingItem = cart.items.find((i) => i.productId.equals(productId))
 
-  const result = await Cart.findByIdAndUpdate(userId, cartData, {
-    new: true,
-    runValidators: true,
-  })
+  if (!existingItem) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Item not found in cart')
+  }
+
+  existingItem.quantity = quantity
+
+  const result = await cart.save()
   return result
 }
 
@@ -62,16 +81,22 @@ const clearCart = async (userId: string) => {
   return result
 }
 
-const removeCartItem = async (userId: string, productId: Types.ObjectId) => {
+const removeCartItem = async (
+  userId: string,
+  productId: Types.ObjectId | string,
+) => {
   const cart = await Cart.findOne({ userId })
 
   if (!cart) {
     throw new AppError(httpStatus.NOT_FOUND, 'Cart not found')
   }
 
-  cart.items = cart.items.filter((item) => item.productId !== productId)
-  const result = await cart.save()
+  const filteredItems = cart.items.filter(
+    (item) => String(item.productId) !== productId,
+  )
 
+  cart.items = filteredItems
+  const result = await cart.save()
   return result
 }
 

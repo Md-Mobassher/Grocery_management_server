@@ -2,6 +2,7 @@ import httpStatus from 'http-status'
 import catchAsync from '../../utils/catchAsync'
 import sendResponse from '../../utils/sendResponse'
 import { CartServices } from './cart.service'
+import { Types } from 'mongoose'
 
 const addToCart = catchAsync(async (req, res) => {
   const userId = req.user.id
@@ -17,8 +18,8 @@ const addToCart = catchAsync(async (req, res) => {
 })
 
 const getCartByUserId = catchAsync(async (req, res) => {
-  const userId = req.user.id
-  const result = await CartServices.getCartByUserId(userId)
+  const { id } = req.user
+  const result = await CartServices.getCartByUserId(id)
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -30,8 +31,14 @@ const getCartByUserId = catchAsync(async (req, res) => {
 
 const updateCartItemQuantity = catchAsync(async (req, res) => {
   const userId = req.user.id
-  const items = req.body.items
-  const result = await CartServices.updateCartItemQuantity(userId, items)
+  const productId: Types.ObjectId | string = req.params.itemId
+  const quantity = req.body.quantity
+
+  const result = await CartServices.updateCartItemQuantity(
+    userId,
+    productId,
+    quantity,
+  )
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -57,7 +64,7 @@ const clearCart = catchAsync(async (req, res) => {
 
 const removeCartItem = catchAsync(async (req, res) => {
   const userId = req.user.id
-  const productId = req.params.productId
+  const productId: Types.ObjectId | string = req.params.itemId
   const result = await CartServices.removeCartItem(userId, productId)
 
   sendResponse(res, {

@@ -14,20 +14,20 @@ router.post(
   CartControllers.addToCart,
 )
 
-router.get('/', CartControllers.getCartByUserId)
+router.get('/', auth(USER_ROLE.seller), CartControllers.getCartByUserId)
 
 router.put(
   '/:itemId',
-
+  auth(USER_ROLE.seller),
   CartControllers.updateCartItemQuantity,
 )
 
+router.delete('/', auth(USER_ROLE.seller), CartControllers.clearCart)
+
 router.delete(
-  '/',
-
-  CartControllers.clearCart,
+  '/:itemId',
+  auth(USER_ROLE.seller),
+  CartControllers.removeCartItem,
 )
-
-router.delete('/:itemId', CartControllers.removeCartItem)
 
 export const CartRoutes = router
