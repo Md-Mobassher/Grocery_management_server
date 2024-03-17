@@ -4,6 +4,7 @@ import { AdminRoutes } from '../modules/admin/admin.route'
 import { AuthRoutes } from '../modules/auth/auth.route'
 import { SellerRoutes } from '../modules/seller/seller.routes'
 import { ProductRoutes } from '../modules/product/product.routes'
+import { CategoryRoutes } from '../modules/category/category.routes'
 
 const router = Router()
 
@@ -24,6 +25,10 @@ const moduleRoutes = [
   {
     path: '/sellers',
     route: SellerRoutes,
+  },
+  {
+    path: '/categories',
+    route: CategoryRoutes,
   },
   {
     path: '/products',

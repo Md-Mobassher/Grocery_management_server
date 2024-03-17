@@ -5,7 +5,7 @@ const createCategoryValidationSchema = z.object({
   description: z.string().optional(),
 })
 const updateCategoryValidationSchema = z.object({
-  name: z.string().min(1).max(255),
+  name: z.string().min(1).max(255).optional(),
   description: z.string().optional(),
 })
 
