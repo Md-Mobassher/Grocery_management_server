@@ -3,7 +3,6 @@ import httpStatus from 'http-status'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import config from '../../config'
 import AppError from '../../errors/AppError'
-// import { sendEmail } from '../../utils/sendEmail'
 import { TLoginUser } from './auth.interface'
 import { createToken, verifyToken } from './auth.utils'
 import { User } from '../users/user.model'
@@ -39,6 +38,7 @@ const loginUser = async (payload: TLoginUser) => {
   //create token and sent to the  client
 
   const jwtPayload = {
+    id: user._id,
     email: user.email,
     role: user.role,
   }
@@ -148,6 +148,7 @@ const refreshToken = async (token: string) => {
   }
 
   const jwtPayload = {
+    id: user._id,
     email: user.email,
     role: user.role,
   }
@@ -185,6 +186,7 @@ const forgetPassword = async (userEmail: string) => {
   }
 
   const jwtPayload = {
+    id: user._id,
     email: user.email,
     role: user.role,
   }
