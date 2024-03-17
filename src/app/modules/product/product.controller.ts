@@ -2,15 +2,12 @@ import httpStatus from 'http-status'
 import catchAsync from '../../utils/catchAsync'
 import sendResponse from '../../utils/sendResponse'
 import { ProductServices } from './product.service'
-import { Express } from 'express'
 
 const createProduct = catchAsync(async (req, res) => {
   const { ...productData } = req.body
 
-  const files: Express.Multer.File[] | [] = req.files
-
   const result = await ProductServices.createProductIntoDB(
-    files, // Pass the files with the asserted type
+    req.files,
     productData,
   )
   sendResponse(res, {

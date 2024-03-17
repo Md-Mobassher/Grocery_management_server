@@ -7,12 +7,8 @@ import { Product } from './product.model'
 import { ProductSearchableFields } from './product.constant'
 import { TProduct } from './product.interface'
 import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary'
-import { Express } from 'express'
 
-const createProductIntoDB = async (
-  files: Express.Multer.File[] | [],
-  payload: TProduct,
-) => {
+const createProductIntoDB = async (files: any[], payload: TProduct) => {
   const session = await mongoose.startSession()
 
   try {
@@ -78,23 +74,17 @@ const getSingleProductFromDB = async (id: string) => {
     throw new AppError(httpStatus.NOT_FOUND, 'Product not found!')
   }
 
+  if (result.isDeleted) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Product is Deleted!')
+  }
+
   return result
 }
 
 const updateProductIntoDB = async (id: string, payload: Partial<TProduct>) => {
-  const { name, ...remainingAdminData } = payload
+  const { ...remaininProductData } = payload
 
-  const modifiedUpdatedData: Record<string, unknown> = {
-    ...remainingAdminData,
-  }
-
-  if (name && Object.keys(name).length) {
-    for (const [key, value] of Object.entries(name)) {
-      modifiedUpdatedData[`name.${key}`] = value
-    }
-  }
-
-  const result = await Product.findByIdAndUpdate(id, modifiedUpdatedData, {
+  const result = await Product.findByIdAndUpdate(id, remaininProductData, {
     new: true,
     runValidators: true,
   })
@@ -102,39 +92,22 @@ const updateProductIntoDB = async (id: string, payload: Partial<TProduct>) => {
 }
 
 const deleteProductFromDB = async (id: string | undefined) => {
-  const session = await mongoose.startSession()
+  const isProductExists = await Product.findById(id)
 
-  try {
-    session.startTransaction()
-
-    const isProductExists = await Product.findById(id).session(session)
-
-    if (!isProductExists) {
-      throw new AppError(httpStatus.NOT_FOUND, 'Product not found!')
-    }
-    if (isProductExists.isDeleted) {
-      throw new AppError(httpStatus.NOT_FOUND, 'Product is Already Deleted!')
-    }
-
-    const deletedProduct = await Product.findByIdAndUpdate(
-      id,
-      { isDeleted: true },
-      { new: true, session },
-    )
-
-    if (!deletedProduct) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete Seller')
-    }
-
-    await session.commitTransaction()
-    await session.endSession()
-
-    return deletedProduct
-  } catch (err: any) {
-    await session.abortTransaction()
-    await session.endSession()
-    throw new Error(err)
+  if (!isProductExists) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Product not found!')
   }
+  if (isProductExists.isDeleted) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Product is Already Deleted!')
+  }
+
+  const result = await Product.findByIdAndUpdate(
+    id,
+    { isDeleted: true },
+    { new: true },
+  )
+
+  return result
 }
 
 export const ProductServices = {
