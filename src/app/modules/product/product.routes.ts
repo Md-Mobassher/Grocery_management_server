@@ -15,7 +15,7 @@ router.post(
   '/',
   auth(USER_ROLE.superAdmin, USER_ROLE.admin),
 
-  upload.array('files', 10),
+  upload.array('files', 5),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = JSON.parse(req.body.data)
     next()

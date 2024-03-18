@@ -1,3 +1,4 @@
+import { Express } from 'express'
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status'
 import mongoose from 'mongoose'
@@ -8,7 +9,13 @@ import { ProductSearchableFields } from './product.constant'
 import { TProduct } from './product.interface'
 import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary'
 
-const createProductIntoDB = async (files: any[], payload: TProduct) => {
+const createProductIntoDB = async (
+  files:
+    | Express.Multer.File[]
+    | { [fieldname: string]: Express.Multer.File[] }
+    | undefined,
+  payload: TProduct,
+) => {
   const session = await mongoose.startSession()
 
   try {
@@ -17,14 +24,24 @@ const createProductIntoDB = async (files: any[], payload: TProduct) => {
     // Array to store Cloudinary URLs for each uploaded file
     const cloudinaryUrls: string[] = []
 
-    // Iterate over each uploaded file
-    for (const file of files) {
-      const imageName = `${payload.name}-${Date.now()}`
+    if (!files || (Array.isArray(files) && files.length === 0)) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        'Please provide at least one product image.',
+      )
+    } else {
+      const fileArray = Array.isArray(files)
+        ? files
+        : Object.values(files).flat()
 
-      const path = file.path
-      // Send image to Cloudinary
-      const { secure_url } = await sendImageToCloudinary(imageName, path)
-      cloudinaryUrls.push(secure_url as string)
+      for (const file of fileArray) {
+        const imageName = `${payload.name}-${Date.now()}`
+        const path = file.path
+
+        // Send image to Cloudinary
+        const { secure_url } = await sendImageToCloudinary(imageName, path)
+        cloudinaryUrls.push(secure_url as string)
+      }
     }
 
     // Initialize imageUrl array if it's undefined

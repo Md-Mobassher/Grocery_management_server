@@ -1,3 +1,4 @@
+import { Express } from 'express'
 import httpStatus from 'http-status'
 import catchAsync from '../../utils/catchAsync'
 import sendResponse from '../../utils/sendResponse'
@@ -5,11 +6,12 @@ import { ProductServices } from './product.service'
 
 const createProduct = catchAsync(async (req, res) => {
   const { ...productData } = req.body
+  const files:
+    | Express.Multer.File[]
+    | { [fieldname: string]: Express.Multer.File[] }
+    | undefined = req.files
 
-  const result = await ProductServices.createProductIntoDB(
-    req.files,
-    productData,
-  )
+  const result = await ProductServices.createProductIntoDB(files, productData)
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
