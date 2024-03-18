@@ -31,6 +31,7 @@ export const updateBuyerValidationSchema = z
     user: z.string().optional(),
     name: updateUserNameValidationSchema.optional(),
     gender: z.enum([...Gender] as [string, ...string[]]).optional(),
+    email: z.string().email(),
     dateOfBirth: z.date().optional(),
     contactNo: z.string().optional(),
     emergencyContactNo: z.string().optional(),

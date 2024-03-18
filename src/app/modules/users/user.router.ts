@@ -7,6 +7,7 @@ import auth from '../../middlewares/auth'
 import { upload } from '../../utils/sendImageToCloudinary'
 import { UserValidation } from './user.validation'
 import { createSellerValidationSchema } from '../seller/seller.validation'
+import { createBuyerValidationSchema } from '../buyer/buyer.validation'
 
 const router = express.Router()
 
@@ -34,6 +35,18 @@ router.post(
   },
   validateRequest(createSellerValidationSchema),
   UserControllers.createSeller,
+)
+
+router.post(
+  '/create-buyer',
+
+  upload.single('file'),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = JSON.parse(req.body.data)
+    next()
+  },
+  validateRequest(createBuyerValidationSchema),
+  UserControllers.createBuyer,
 )
 
 router.post(

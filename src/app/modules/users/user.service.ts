@@ -10,6 +10,8 @@ import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary'
 import { USER_ROLE } from './user.constant'
 import { Seller } from '../seller/seller.model'
 import { TSeller } from '../seller/seller.interface'
+import { TBuyer } from '../buyer/buyer.interface'
+import { Buyer } from '../buyer/buyer.model'
 
 const createAdminIntoDB = async (
   file: any,
@@ -130,13 +132,13 @@ const createSellerIntoDB = async (
 const createBuyerIntoDB = async (
   file: any,
   password: string,
-  payload: TAdmin,
+  payload: TBuyer,
 ) => {
   // create a user object
   const userData: Partial<IUser> = {}
 
   //set student role
-  userData.role = 'admin'
+  userData.role = 'buyer'
 
   userData.password = password
 
@@ -159,25 +161,25 @@ const createBuyerIntoDB = async (
     // create a user (transaction-1)
     const newUser = await User.create([userData], { session })
 
-    //create a admin
+    //create a user
     if (!newUser.length) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create admin')
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create User')
     }
     // set email, _id as user
     payload.email = newUser[0].email
-    payload.user = newUser[0]._id //reference _id
+    payload.user = newUser[0]._id
 
-    // create a admin (transaction-2)
-    const newAdmin = await Admin.create([payload], { session })
+    // create a buyer (transaction-2)
+    const newBuyer = await Buyer.create([payload], { session })
 
-    if (!newAdmin.length) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create admin')
+    if (!newBuyer.length) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create Buyer')
     }
 
     await session.commitTransaction()
     await session.endSession()
 
-    return newAdmin
+    return newBuyer
   } catch (err: any) {
     await session.abortTransaction()
     await session.endSession()

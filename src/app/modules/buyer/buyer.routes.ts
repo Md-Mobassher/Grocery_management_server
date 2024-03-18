@@ -27,7 +27,7 @@ router.patch(
 )
 
 router.delete(
-  '/:sellerId',
+  '/:buyerId',
   auth(USER_ROLE.superAdmin, USER_ROLE.admin),
   BuyerControllers.deleteBuyer,
 )

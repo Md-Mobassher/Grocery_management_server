@@ -20,11 +20,11 @@ const createAdmin = catchAsync(async (req, res) => {
 })
 
 const createSeller = catchAsync(async (req, res) => {
-  const { password, ...adminData } = req.body
+  const { password, ...sellerData } = req.body
   const result = await UserServices.createSellerIntoDB(
     req.file,
     password,
-    adminData,
+    sellerData,
   )
 
   sendResponse(res, {
@@ -36,11 +36,11 @@ const createSeller = catchAsync(async (req, res) => {
 })
 
 const createBuyer = catchAsync(async (req, res) => {
-  const { password, ...adminData } = req.body
+  const { password, ...buyerData } = req.body
   const result = await UserServices.createBuyerIntoDB(
     req.file,
     password,
-    adminData,
+    buyerData,
   )
 
   sendResponse(res, {
