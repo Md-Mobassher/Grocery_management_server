@@ -4,7 +4,7 @@ The **Grocery Management System** is a comprehensive solution designed to facili
 
 ## Table of Contents
 
-- [Live API Link](#Live API)
+- [Live API Link](#liveapi)
 - [API Documentation](#apidocumentation)
 - [Features](#features)
 - [Endpoints](#endpoints)
