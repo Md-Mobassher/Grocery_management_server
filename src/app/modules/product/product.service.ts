@@ -8,6 +8,7 @@ import { Product } from './product.model'
 import { ProductSearchableFields } from './product.constant'
 import { TProduct } from './product.interface'
 import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary'
+import { Category } from '../category/category.model'
 
 const createProductIntoDB = async (
   files:
@@ -17,9 +18,18 @@ const createProductIntoDB = async (
   payload: TProduct,
 ) => {
   const session = await mongoose.startSession()
+  const ids = payload.category
 
   try {
     session.startTransaction()
+
+    for (const id of ids) {
+      const isCategoryExists = await Category.findById(id)
+
+      if (!isCategoryExists) {
+        throw new AppError(httpStatus.NOT_FOUND, 'This category do not exists.')
+      }
+    }
 
     // Array to store Cloudinary URLs for each uploaded file
     const cloudinaryUrls: string[] = []

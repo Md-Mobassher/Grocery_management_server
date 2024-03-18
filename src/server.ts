@@ -8,7 +8,7 @@ let server: Server
 
 async function main() {
   try {
-    await mongoose.connect(config.database_url_local as string)
+    await mongoose.connect(config.database_url as string)
     console.log(`Connected to MongoDB Database`)
 
     seedSuperAdmin()
