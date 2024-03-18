@@ -30,7 +30,14 @@ const getSingleBuyerFromDB = async (id: string) => {
 }
 
 const updateBuyerIntoDB = async (id: string, payload: Partial<TBuyer>) => {
-  const { name, ...remainingData } = payload
+  const { name, email, ...remainingData } = payload
+
+  if (email) {
+    throw new AppError(
+      httpStatus.METHOD_NOT_ALLOWED,
+      'You cannot update email address',
+    )
+  }
 
   const modifiedUpdatedData: Record<string, unknown> = {
     ...remainingData,
