@@ -76,7 +76,7 @@ The Grocery Management System includes the following features:
 
 10. **API Documentation**:
 
-    - Comprehensive API documentation using Swagger.
+    - Comprehensive API documentation using Postman.
 
 11. **Testing**:
 
@@ -88,21 +88,6 @@ The Grocery Management System includes the following features:
     - Optimization of database queries for efficiency.
     - Caching mechanisms for frequently accessed data.
     - Planning for potential scaling requirements.
-
-13. **Logging and Monitoring**:
-
-    - Logging for tracking system activities.
-    - Monitoring to identify and address performance issues.
-
-14. **Data Backup and Recovery**:
-
-    - Regular backup of critical data to prevent data loss.
-    - Recovery mechanism in case of system failures.
-
-15. **Compliance**:
-
-    - Compliance with data protection regulations (e.g., GDPR).
-    - Secure handling and storage of user data.
 
 ## Endpoints
 
