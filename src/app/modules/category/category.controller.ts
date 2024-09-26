@@ -2,11 +2,15 @@ import httpStatus from 'http-status'
 import catchAsync from '../../utils/catchAsync'
 import sendResponse from '../../utils/sendResponse'
 import { CategoryServices } from './category.service'
+import AppError from '../../errors/AppError'
 
 const createCategory = catchAsync(async (req, res) => {
   const { ...categoryData } = req.body
 
   const result = await CategoryServices.createCategoryIntoDB(categoryData)
+  if (!result) {
+    throw new AppError(404, 'No data found')
+  }
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -17,7 +21,9 @@ const createCategory = catchAsync(async (req, res) => {
 
 const getAllCategories = catchAsync(async (req, res) => {
   const result = await CategoryServices.getAllCategoriesFromDB(req.query)
-
+  if (!result) {
+    throw new AppError(404, 'No data found')
+  }
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -30,7 +36,9 @@ const getAllCategories = catchAsync(async (req, res) => {
 const getSingleCategory = catchAsync(async (req, res) => {
   const { id } = req.params
   const result = await CategoryServices.getSingleCategoryFromDB(id)
-
+  if (!result) {
+    throw new AppError(404, 'No data found')
+  }
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -46,7 +54,9 @@ const updateCategory = catchAsync(async (req, res) => {
     categoryId,
     categoryData,
   )
-
+  if (!result) {
+    throw new AppError(404, 'No data found')
+  }
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -55,18 +65,29 @@ const updateCategory = catchAsync(async (req, res) => {
   })
 })
 
+const softDeleteCategory = catchAsync(async (req, res) => {
+  const { categoryId } = req.params
+  const result = await CategoryServices.softDeleteCategoryFromDB(categoryId)
+  if (!result?.isDeleted) {
+    throw new AppError(404, 'No data found')
+  }
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Category is deleted succesfully!',
+    data: null,
+  })
+})
 const deleteCategory = catchAsync(async (req, res) => {
   const { categoryId } = req.params
-  const result = await CategoryServices.deleteCategoryFromDB(categoryId)
+  await CategoryServices.deleteCategoryFromDB(categoryId)
 
-  if (result?.isDeleted === true) {
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: 'Category is deleted succesfully!',
-      data: null,
-    })
-  }
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Category is deleted succesfully!',
+    data: null,
+  })
 })
 
 export const CategoryControllers = {
@@ -74,5 +95,6 @@ export const CategoryControllers = {
   getAllCategories,
   getSingleCategory,
   updateCategory,
+  softDeleteCategory,
   deleteCategory,
 }

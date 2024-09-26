@@ -3,6 +3,8 @@ import { Model } from 'mongoose'
 
 export type TCategory = {
   name: string
+  slug: string
+  imageUrl: string
   description?: string
   isActive: boolean
   isDeleted: boolean

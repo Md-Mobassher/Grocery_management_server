@@ -54,7 +54,7 @@ const updateCategoryIntoDB = async (
   return result
 }
 
-const deleteCategoryFromDB = async (id: string | undefined) => {
+const softDeleteCategoryFromDB = async (id: string | undefined) => {
   const isCategoryExists = await Category.findById(id)
 
   if (!isCategoryExists) {
@@ -73,10 +73,26 @@ const deleteCategoryFromDB = async (id: string | undefined) => {
   return result
 }
 
+const deleteCategoryFromDB = async (id: string | undefined) => {
+  const isCategoryExists = await Category.findById(id)
+
+  if (!isCategoryExists) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Category not found!')
+  }
+  if (isCategoryExists.isDeleted) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Category is Already Deleted!')
+  }
+
+  const result = await Category.findByIdAndDelete(id)
+
+  return result
+}
+
 export const CategoryServices = {
   createCategoryIntoDB,
   getAllCategoriesFromDB,
   getSingleCategoryFromDB,
   updateCategoryIntoDB,
+  softDeleteCategoryFromDB,
   deleteCategoryFromDB,
 }

@@ -28,6 +28,11 @@ router.patch(
 router.delete(
   '/:categoryId',
   auth(USER_ROLE.superAdmin, USER_ROLE.admin),
+  CategoryControllers.softDeleteCategory,
+)
+router.delete(
+  '/delete/:categoryId',
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
   CategoryControllers.deleteCategory,
 )
 
