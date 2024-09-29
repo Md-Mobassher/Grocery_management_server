@@ -1,6 +1,6 @@
-import { Types } from 'mongoose'
+import { Model, Types } from 'mongoose'
 
-export type TProduct = {
+export interface IProduct {
   _id: string
   name: string
   description: string
@@ -19,4 +19,10 @@ export type TProduct = {
   brand?: string
   ratingsAverage?: number
   ratingsQuantity?: number
+}
+
+export interface ProductModel extends Model<IProduct> {
+  //instance methods for checking if the user exist
+  // eslint-disable-next-line no-unused-vars
+  isProductExist(id: string): Promise<IProduct | null>
 }

@@ -8,6 +8,7 @@ import { CategoryRoutes } from '../modules/category/category.routes'
 import { CartRoutes } from '../modules/cart/cart.routes'
 import { BuyerRoutes } from '../modules/buyer/buyer.routes'
 import { PaymentRoutes } from '../modules/payment/payment.routes'
+import { OrderRoutes } from '../modules/order/order.routes'
 
 const router = Router()
 
@@ -43,6 +44,10 @@ const moduleRoutes = [
   {
     path: '/cart',
     route: CartRoutes,
+  },
+  {
+    path: '/orders',
+    route: OrderRoutes,
   },
   {
     path: '/payment',
