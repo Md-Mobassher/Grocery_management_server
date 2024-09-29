@@ -16,5 +16,12 @@ declare namespace NodeJS {
     CLOUDINARY_API_KEY: string
     CLOUDINARY_API_SECRET: string
     SUPER_ADMIN_PASS: string
+    STORE_ID: string
+    STORE_PASS: string
+    SUCCESS_URL: string
+    CANCEL_URL: string
+    FAIL_URL: string
+    SSL_PAYMENT_API: string
+    SSL_VALIDATION_API: string
   }
 }

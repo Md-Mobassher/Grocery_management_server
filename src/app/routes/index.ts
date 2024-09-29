@@ -7,6 +7,7 @@ import { ProductRoutes } from '../modules/product/product.routes'
 import { CategoryRoutes } from '../modules/category/category.routes'
 import { CartRoutes } from '../modules/cart/cart.routes'
 import { BuyerRoutes } from '../modules/buyer/buyer.routes'
+import { PaymentRoutes } from '../modules/payment/payment.routes'
 
 const router = Router()
 
@@ -19,7 +20,6 @@ const moduleRoutes = [
     path: '/users',
     route: userRoutes,
   },
-
   {
     path: '/admins',
     route: AdminRoutes,
@@ -43,6 +43,10 @@ const moduleRoutes = [
   {
     path: '/cart',
     route: CartRoutes,
+  },
+  {
+    path: '/payment',
+    route: PaymentRoutes,
   },
 ]
 

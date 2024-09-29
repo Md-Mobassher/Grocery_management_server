@@ -45,14 +45,14 @@ const loginUser = async (payload: TLoginUser) => {
 
   const accessToken = createToken(
     jwtPayload,
-    config.jwt_access_secret as string,
-    config.jwt_access_expires_in as string,
+    config.jwt.access_secret as string,
+    config.jwt.access_expires_in as string,
   )
 
   const refreshToken = createToken(
     jwtPayload,
-    config.jwt_refresh_secret as string,
-    config.jwt_refresh_expires_in as string,
+    config.jwt.refresh_secret as string,
+    config.jwt.refresh_expires_in as string,
   )
 
   return {
@@ -116,7 +116,7 @@ const changePassword = async (
 
 const refreshToken = async (token: string) => {
   // checking if the given token is valid
-  const decoded = verifyToken(token, config.jwt_refresh_secret as string)
+  const decoded = verifyToken(token, config.jwt.refresh_secret as string)
 
   const { email, iat } = decoded
 
@@ -155,8 +155,8 @@ const refreshToken = async (token: string) => {
 
   const accessToken = createToken(
     jwtPayload,
-    config.jwt_access_secret as string,
-    config.jwt_access_expires_in as string,
+    config.jwt.access_secret as string,
+    config.jwt.access_expires_in as string,
   )
 
   return {
@@ -193,7 +193,7 @@ const forgetPassword = async (userEmail: string) => {
 
   const resetToken = createToken(
     jwtPayload,
-    config.jwt_access_secret as string,
+    config.jwt.access_secret as string,
     '5m',
   )
 
@@ -231,7 +231,7 @@ const resetPassword = async (
 
   const decoded = jwt.verify(
     token,
-    config.jwt_access_secret as string,
+    config.jwt.access_secret as string,
   ) as JwtPayload
 
   //localhost:3000?id=A-0001&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJBLTAwMDEiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MDI4NTA2MTcsImV4cCI6MTcwMjg1MTIxN30.-T90nRaz8-KouKki1DkCSMAbsHyb9yDi0djZU3D6QO4
