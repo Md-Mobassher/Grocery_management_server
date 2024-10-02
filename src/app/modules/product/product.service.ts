@@ -1,4 +1,3 @@
-import { Express } from 'express'
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status'
 import mongoose from 'mongoose'
@@ -6,17 +5,10 @@ import QueryBuilder from '../../builder/QueryBuilder'
 import AppError from '../../errors/AppError'
 import { Product } from './product.model'
 import { ProductSearchableFields } from './product.constant'
-import { TProduct } from './product.interface'
-import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary'
 import { Category } from '../category/category.model'
+import { IProduct } from './product.interface'
 
-const createProductIntoDB = async (
-  files:
-    | Express.Multer.File[]
-    | { [fieldname: string]: Express.Multer.File[] }
-    | undefined,
-  payload: TProduct,
-) => {
+const createProductIntoDB = async (payload: IProduct) => {
   const session = await mongoose.startSession()
   const ids = payload.category
 
@@ -32,33 +24,33 @@ const createProductIntoDB = async (
     }
 
     // Array to store Cloudinary URLs for each uploaded file
-    const cloudinaryUrls: string[] = []
+    // const cloudinaryUrls: string[] = []
 
-    if (!files || (Array.isArray(files) && files.length === 0)) {
-      throw new AppError(
-        httpStatus.BAD_REQUEST,
-        'Please provide at least one product image.',
-      )
-    } else {
-      const fileArray = Array.isArray(files)
-        ? files
-        : Object.values(files).flat()
+    // if (!files || (Array.isArray(files) && files.length === 0)) {
+    //   throw new AppError(
+    //     httpStatus.BAD_REQUEST,
+    //     'Please provide at least one product image.',
+    //   )
+    // } else {
+    //   const fileArray = Array.isArray(files)
+    //     ? files
+    //     : Object.values(files).flat()
 
-      for (const file of fileArray) {
-        const imageName = `${payload.name}-${Date.now()}`
-        const path = file.path
+    //   for (const file of fileArray) {
+    //     const imageName = `${payload.name}-${Date.now()}`
+    //     const path = file.path
 
-        // Send image to Cloudinary
-        const { secure_url } = await sendImageToCloudinary(imageName, path)
-        cloudinaryUrls.push(secure_url as string)
-      }
-    }
+    //     // Send image to Cloudinary
+    //     const { secure_url } = await sendImageToCloudinary(imageName, path)
+    //     cloudinaryUrls.push(secure_url as string)
+    //   }
+    // }
 
     // Initialize imageUrl array if it's undefined
-    payload.imageUrl = payload?.imageUrl || []
+    // payload.imageUrl = payload?.imageUrl || []
 
     // Append Cloudinary URLs to imageUrl array in payload
-    payload.imageUrl = payload.imageUrl.concat(cloudinaryUrls)
+    // payload.imageUrl = payload.imageUrl.concat(cloudinaryUrls)
 
     // Create a Product
     const newProduct = await Product.create([payload], { session })
@@ -108,7 +100,7 @@ const getSingleProductFromDB = async (id: string) => {
   return result
 }
 
-const updateProductIntoDB = async (id: string, payload: Partial<TProduct>) => {
+const updateProductIntoDB = async (id: string, payload: Partial<IProduct>) => {
   const { ...remaininProductData } = payload
 
   const result = await Product.findByIdAndUpdate(id, remaininProductData, {

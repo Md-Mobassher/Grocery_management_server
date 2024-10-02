@@ -12,6 +12,7 @@ export const createProductValidationSchema = z.object({
   description: z.string(),
   price: z.number().positive(),
   quantity: z.number().positive().int(),
+  imageUrl: z.array(z.string()),
   category: z.array(z.string()),
   tags: z.array(z.string()).optional(),
   discount: DiscountSchema.optional(),

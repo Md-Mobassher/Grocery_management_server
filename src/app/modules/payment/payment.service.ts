@@ -1,48 +1,43 @@
-import axios from 'axios'
-import config from '../../config'
+import { Order } from '../order/order.model'
+import AppError from '../../errors/AppError'
+import httpStatus from 'http-status'
+import { PAYMENT_STATUS } from '../order/order.constant'
+import { sslServices } from '../ssl/ssl.service'
+import { Buyer } from '../buyer/buyer.model'
 
-const initPayment = async (id: string) => {
-  console.log(id)
-  const data = {
-    store_id: config.ssl.storeId,
-    store_passwd: config.ssl.storePass,
-    total_amount: 100,
-    currency: 'BDT',
-    tran_id: 'REF123',
-    success_url: config.ssl.successUrl,
-    fail_url: config.ssl.failUrl,
-    cancel_url: config.ssl.calcelUrl,
-    ipn_url: 'http://localhost:3030/ipn',
-    shipping_method: 'Courier',
-    product_name: 'Computer.',
-    product_category: 'Electronic',
-    product_profile: 'general',
-    cus_name: 'Customer Name',
-    cus_email: 'customer@example.com',
-    cus_add1: 'Dhaka',
-    cus_add2: 'Dhaka',
-    cus_city: 'Dhaka',
-    cus_state: 'Dhaka',
-    cus_postcode: '1000',
-    cus_country: 'Bangladesh',
-    cus_phone: '01711111111',
-    cus_fax: '01711111111',
-    ship_name: 'Customer Name',
-    ship_add1: 'Dhaka',
-    ship_add2: 'Dhaka',
-    ship_city: 'Dhaka',
-    ship_state: 'Dhaka',
-    ship_postcode: 1000,
-    ship_country: 'Bangladesh',
+const initPayment = async (orderId: string) => {
+  const order = await Order.findById(orderId).populate('userId')
+  if (!order) {
+    throw new AppError(httpStatus.NOT_FOUND, 'No Order found')
   }
 
-  const response = await axios({
-    method: 'post',
-    url: config.ssl.paymentApi,
-    data: data,
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  const customerInfo = await Buyer.isBuyerExistsByEmail(
+    order?.userId?.email as string,
+  )
+
+  const transactionId = `TxId${Date.now()}-${Math.floor(
+    Math.random() * 100000,
+  )}`
+
+  order.transactionId = transactionId
+  await order.save()
+
+  if (order.paymentStatus === PAYMENT_STATUS.PAID) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'You already pay for the appointment!',
+    )
+  }
+
+  const paymentSession = await sslServices.initPayment({
+    totalAmount: order.totalAmount,
+    transactionId: order.transactionId,
+    customerName: customerInfo?.fullName as string,
+    customerEmail: customerInfo?.email as string,
   })
-  console.log(response)
+  return {
+    paymentUrl: paymentSession.GatewayPageURL,
+  }
 }
 
 export const PaymentServices = {

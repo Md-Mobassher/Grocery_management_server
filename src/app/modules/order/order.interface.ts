@@ -11,7 +11,9 @@ export interface IOrder {
   userId: Types.ObjectId // Reference to User model
   items: TOrderItem[] // Array of items in the order
   totalAmount: number // Total amount of the order
+  transactionId?: string
   status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled'
+  paymentStatus: 'paid' | 'unpaid'
   createdAt: Date
   updatedAt: Date
 }

@@ -1,5 +1,6 @@
 import mongoose, { Schema, Types } from 'mongoose'
 import { IOrder } from './order.interface'
+import { PAYMENT_STATUS } from './order.constant'
 
 const orderItemSchema = new Schema({
   productId: {
@@ -38,6 +39,12 @@ const orderSchema = new Schema(
       enum: ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'],
       default: 'pending',
       required: true,
+    },
+    transactionId: { type: String },
+    paymentStatus: {
+      type: String,
+      required: true,
+      default: PAYMENT_STATUS.UNPAID,
     },
     createdAt: {
       type: Date,

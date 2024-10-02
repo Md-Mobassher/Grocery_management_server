@@ -36,7 +36,6 @@ const createOrder = async (user: JwtPayload, payload: IOrder) => {
     }
   }
   payload.userId = user.id
-  payload.status = 'pending'
 
   // Create the order if all products exist
   const result = await Order.create(payload)

@@ -1,23 +1,45 @@
 import { Schema, model } from 'mongoose'
 import { BloodGroup, Gender } from './buyer.constant'
-import { BuyerModel, TBuyer, TUserName } from './buyer.interface'
+import { BuyerModel, TAddress, TBuyer, TUserName } from './buyer.interface'
 
 const userNameSchema = new Schema<TUserName>({
   firstName: {
     type: String,
     required: [true, 'First Name is required'],
     trim: true,
-    maxlength: [20, 'Name can not be more than 20 characters'],
-  },
-  middleName: {
-    type: String,
-    trim: true,
+    maxlength: [30, 'Name can not be more than 30 characters'],
   },
   lastName: {
     type: String,
     trim: true,
     required: [true, 'Last Name is required'],
-    maxlength: [20, 'Name can not be more than 20 characters'],
+    maxlength: [30, 'Name can not be more than 30 characters'],
+  },
+})
+
+const addressSchema = new Schema<TAddress>({
+  address1: {
+    type: String,
+    required: [true, 'Address1 address is required'],
+  },
+  address2: {
+    type: String,
+  },
+  city: {
+    type: String,
+    required: [true, 'City is required'],
+  },
+  state: {
+    type: String,
+    required: [true, 'State is required'],
+  },
+  postCode: {
+    type: Number,
+    required: [true, 'Post-Code is required'],
+  },
+  country: {
+    type: String,
+    required: [true, 'Country is required'],
   },
 })
 
@@ -59,14 +81,8 @@ const buyerSchema = new Schema<TBuyer, BuyerModel>(
         message: '{VALUE} is not a valid blood group',
       },
     },
-    presentAddress: {
-      type: String,
-      required: [true, 'Present address is required'],
-    },
-    permanentAddress: {
-      type: String,
-      required: [true, 'Permanent address is required'],
-    },
+    presentAddress: addressSchema,
+    permanentAddress: addressSchema,
     profileImg: { type: String, default: '' },
     isDeleted: {
       type: Boolean,
@@ -82,13 +98,7 @@ const buyerSchema = new Schema<TBuyer, BuyerModel>(
 
 // generating full name
 buyerSchema.virtual('fullName').get(function () {
-  return (
-    this?.name?.firstName +
-    ' ' +
-    this?.name?.middleName +
-    ' ' +
-    this?.name?.lastName
-  )
+  return this?.name?.firstName + ' ' + this?.name?.lastName
 })
 
 // filter out deleted documents
@@ -110,6 +120,10 @@ buyerSchema.pre('aggregate', function (next) {
 //checking if user is already exist!
 buyerSchema.statics.isBuyerExistsByEmail = async function (email: string) {
   const existingUser = await Buyer.findOne({ email })
+  return existingUser
+}
+buyerSchema.statics.isBuyerExists = async function (id: string) {
+  const existingUser = await Buyer.findOne({ _id: id })
   return existingUser
 }
 

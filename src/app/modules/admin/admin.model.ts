@@ -7,17 +7,14 @@ const userNameSchema = new Schema<TUserName>({
     type: String,
     required: [true, 'First Name is required'],
     trim: true,
-    maxlength: [20, 'Name can not be more than 20 characters'],
+    maxlength: [30, 'Name can not be more than 30 characters'],
   },
-  middleName: {
-    type: String,
-    trim: true,
-  },
+
   lastName: {
     type: String,
     trim: true,
     required: [true, 'Last Name is required'],
-    maxlength: [20, 'Name can not be more than 20 characters'],
+    maxlength: [30, 'Name can not be more than 30 characters'],
   },
 })
 
@@ -86,13 +83,7 @@ const adminSchema = new Schema<TAdmin, AdminModel>(
 
 // generating full name
 adminSchema.virtual('fullName').get(function () {
-  return (
-    this?.name?.firstName +
-    ' ' +
-    this?.name?.middleName +
-    ' ' +
-    this?.name?.lastName
-  )
+  return this?.name?.firstName + ' ' + this?.name?.lastName
 })
 
 // filter out deleted documents
