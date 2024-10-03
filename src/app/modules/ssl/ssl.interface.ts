@@ -10,16 +10,16 @@ export interface PaymentInfo {
   cusAdd1: string
   cusAdd2?: string
   cusCity: string
-  cusState?: string
+  cusState: string
   cusPostcode: string
   cusCountry: string
   cusPhone: string
   cusFax?: string
-  shipName?: string
-  shipAdd1?: string
-  shipAdd2?: string
-  shipCity?: string
-  shipState?: string
-  shipPostcode?: number
+  shipName: string
+  shipAdd1: string
+  shipAdd2: string
+  shipCity: string
+  shipState: string
+  shipPostcode: number
   shipCountry: string
 }

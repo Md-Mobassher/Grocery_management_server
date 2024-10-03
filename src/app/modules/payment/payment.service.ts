@@ -11,9 +11,7 @@ const initPayment = async (orderId: string) => {
     throw new AppError(httpStatus.NOT_FOUND, 'No Order found')
   }
 
-  const customerInfo = await Buyer.isBuyerExistsByEmail(
-    order?.userId?.email as string,
-  )
+  const customerInfo = await Buyer.isBuyerExistsByEmail(order?.userId?.email)
 
   const transactionId = `TxId${Date.now()}-${Math.floor(
     Math.random() * 100000,
@@ -32,8 +30,15 @@ const initPayment = async (orderId: string) => {
   const paymentSession = await sslServices.initPayment({
     totalAmount: order.totalAmount,
     transactionId: order.transactionId,
-    customerName: customerInfo?.fullName as string,
+    productName: order.items.forEach((item) => item.productId),
+    customerName: order.items.forEach((item) => item.productId),
+    customerCategory: customerInfo?.fullName as string,
     customerEmail: customerInfo?.email as string,
+    cusAdd1: customerInfo?.presentAddress?.address1,
+    cusAdd2: customerInfo?.presentAddress?.address2,
+    cusCity: customerInfo?.presentAddress?.city,
+    cusState: customerInfo?.presentAddress?.state,
+    cusPostcode: customerInfo?.presentAddress?.postCode,
   })
   return {
     paymentUrl: paymentSession.GatewayPageURL,
